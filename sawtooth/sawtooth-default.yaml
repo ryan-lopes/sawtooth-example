@@ -98,4 +98,4 @@ services:
         tail -f /dev/null \
         \""
     volumes:
-      - c:\sawtooth:/sawtooth
+      - c:\sawtooth-example\sawtooth:/sawtooth

@@ -1,7 +1,7 @@
 from sawtooth_sdk.processor.handler import TransactionHandler
 
-from models.doctor import Doctor
-from models.patient import Patient
+from models.doctorModel import Doctor
+from models.patientModel import Patient
 from utils import _hash
 
 import json
@@ -27,10 +27,10 @@ class ControllerTransactionHandler(TransactionHandler):
     def apply(self, transaction, context):
         header = transaction.header
         signer = header.signer_public_key
-        payload = RecordFactory.from_bytes(transaction.payload)
+        payload = ControllerFactory.from_bytes(transaction.payload)
         payload.apply(context, self._namespace_prefix)
         
-class RecordFactory:
+class ControllerFactory:
     @staticmethod
     def getPayload(payload):
         try:
@@ -62,4 +62,4 @@ class RecordFactory:
             return Patient(action, body)
     @staticmethod
     def from_bytes(payload):
-        return RecordFactory.getPayload(payload=payload)
+        return ControllerFactory.getPayload(payload=payload)

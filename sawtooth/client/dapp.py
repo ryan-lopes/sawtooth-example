@@ -148,7 +148,7 @@ def main():
     FAMILY_NAME = 'FAMILY_CONTROLLER'
     CPF = '000.000.000-21'
     rawPayload = {
-        "action": "show",
+        "action": "add",
         "type": "doctor",
         "body": {
             "cpf": CPF,

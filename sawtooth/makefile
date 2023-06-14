@@ -8,5 +8,5 @@ bash:
 	docker exec -it sawtooth-dev-default bash
 dapp:
 	docker exec -t sawtooth-dev-default bash -c "cd sawtooth/client/ ; python3 dapp.py"
-server:
+serve:
 	docker exec -t sawtooth-dev-default bash -c "cd sawtooth/server/ ; python3 main.py"

@@ -2,6 +2,7 @@ from sawtooth_sdk.processor.handler import TransactionHandler
 
 from models.recordModel import Record
 from utils import _hash
+from controller import ControllerTransactionHandler, ControllerFactory
 
 import json
 
@@ -20,14 +21,21 @@ class RecordTransactionHandler(TransactionHandler):
         return ['1.0']
 
     @property
-    def namespaces(self):
-        return [self._namespace_prefix]
+    def namespace(self):
+        return self._namespace_prefix
 
     def apply(self, transaction, context):
         header = transaction.header
         signer = header.signer_public_key
-        payload = RecordFactory.from_bytes(transaction.payload)
-        payload.apply(context, self._namespace_prefix)
+        action, patient_cpf, record = RecordFactory.from_bytes(transaction.payload)
+
+        controller_namespace_prefix = ControllerTransactionHandler.namespace
+        patient_address = controller_namespace_prefix + _hash(patient_cpf.encode('utf-8'))[:64]
+        state = context.get_state([patient_address])
+        
+        patient = ControllerFactory.getPatient(state)
+        record.apply(action, patient)
+        patient.apply(action="update", state=state, address=patient_address, context=context)
         
 class RecordFactory:
     @staticmethod
@@ -36,6 +44,7 @@ class RecordFactory:
             # The payload is csv utf-8 encoded string
             data = json.loads(payload.decode())
             action = data["action"]
+            patient_cpf = data["patient_cpf"]
             body = data["body"]
         except ValueError:
             print("Invalid payload serialization")
@@ -48,7 +57,7 @@ class RecordFactory:
         if action not in ('add', 'show', 'delete'):
             print('Invalid action: {}' % format(action))
             return None
-        return Record(action, body)
+        return action, patient_cpf, Record(body)
     @staticmethod
     def from_bytes(payload):
         return RecordFactory.getPayload(payload=payload)

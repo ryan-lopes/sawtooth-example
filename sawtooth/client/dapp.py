@@ -158,6 +158,7 @@ def main():
     
     key_file = '/sawtooth/client/jorge.priv'
     client = PIBITIClient(baseUrl=DEFAULT_URL, keyFile=key_file, family_name=FAMILY_NAME, cpf=CPF)
+    print("Wrap and send")
     response = client._wrap_and_send(rawPayload)
     print("Response: {}".format(response))
 

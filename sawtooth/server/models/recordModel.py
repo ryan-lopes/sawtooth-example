@@ -2,28 +2,20 @@ import json
 from utils import _hash
 
 class Record:
-    def __init__(self, action, body):
+    def __init__(self, body):
+        id = body["id"]
         title = body["title"]
         bundle_hash = body["bundle_hash"]
-        cpf = body["cpf"]
+        requests = body["requests"]
 
-        if not bundle_hash:
-            print('Bundle Hash is required')
-            return None
-
-        if not title:
-            print('Title is required')
-            return None
-
-        if not cpf:
-            print('CPF is required')
+        if not id:
+            print('ID is required')
             return None
         
+        self._id = id
         self._title = title
         self._bundle_hash = bundle_hash
-        self._requests = []
-        self._action = action
-        self._cpf_owner = cpf ## Verificar
+        self._requests = requests
     @property
     def action(self):
         return self._action
@@ -53,28 +45,17 @@ class Record:
         
         return json.dumps(record).encode()
 
-    def apply(self, context, namespace_prefix):
-        address = namespace_prefix + _hash(self._cpf.encode('utf-8'))[:64]
-        state = context.get_state([address])
-
-        if self.action == 'add':
-            if state:
-                print('Doctor already exists')
-                return None
-            state_data = self.to_bytes()
-            context.set_state({address: state_data})
-            
-        elif self.action == 'show':
-            if not state:
-                print('Doctor does not exist')
-                return None
-            state_data = state[0].data.decode('utf-8')
-            print(f'Doctor data: {state_data}')
-        
-        elif self.action == 'delete':
-            if not state:
-                print('Doctor does not exist')
-                return None
-
-            context.delete_state([address])
+    def apply(self, action, patient):
+        if action == 'add':
+            patient.add_record(self.to_bytes())
+        elif action == 'show':
+            record = patient.get_record(self.id)
+        elif action == 'delete':
+            patient.delete_record(self.id)
+        elif action == 'grant':
+            # patient.grant_record(self.id, id_request)
+            pass
+        elif action == 'request':
+            # patient.request_record(self.id, cpf_doctor)
+            pass
         print("Apply realizado com sucesso")

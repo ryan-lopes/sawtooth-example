@@ -11,7 +11,6 @@ FAMILY_NAME = 'FAMILY_CONTROLLER'
 class ControllerTransactionHandler(TransactionHandler):
     def __init__(self):
         self._namespace_prefix = _hash(FAMILY_NAME.encode('utf-8'))[0:6]
-
     @property
     def family_name(self):
         return FAMILY_NAME
@@ -21,16 +20,25 @@ class ControllerTransactionHandler(TransactionHandler):
         return ['1.0']
 
     @property
-    def namespaces(self):
-        return [self._namespace_prefix]
+    def namespace(self):
+        return self._namespace_prefix
 
     def apply(self, transaction, context):
         header = transaction.header
         signer = header.signer_public_key
-        payload = ControllerFactory.from_bytes(transaction.payload)
-        payload.apply(context, self._namespace_prefix)
+        action, payload = ControllerFactory.from_bytes(transaction.payload)
+        address = self._namespace_prefix + _hash(payload.cpf.encode('utf-8'))[:64]
+        state = context.get_state([address])
+        payload.apply(action, state, address, context)
         
 class ControllerFactory:
+    @staticmethod
+    def getPatient(state):
+        if not state:
+            print('Patient does not exist')
+            return None
+        state_data = state[0].data.decode('utf-8')
+        return Patient.from_bytes(state_data)
     @staticmethod
     def getPayload(payload):
         try:
@@ -56,10 +64,10 @@ class ControllerFactory:
             return None
         
         if type == 'doctor':
-            return Doctor(action, body)
+            return action, Doctor(body)
         
         if type == 'patient':
-            return Patient(action, body)
+            return action, Patient(body)
     @staticmethod
     def from_bytes(payload):
         return ControllerFactory.getPayload(payload=payload)

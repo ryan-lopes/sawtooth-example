@@ -2,7 +2,7 @@ import json
 from utils import _hash
 
 class Doctor:
-    def __init__(self, action, body):
+    def __init__(self, body):
         cpf = body["cpf"]
         name = body["name"]
         
@@ -16,12 +16,7 @@ class Doctor:
         
         self._name = name
         self._cpf = cpf
-        self._action = action
     
-    @property
-    def action(self):
-        return self._action
-
     @property
     def cpf(self):
         return self._cpf
@@ -38,25 +33,22 @@ class Doctor:
         
         return json.dumps(doctor).encode()
 
-    def apply(self, context, namespace_prefix):
-        address = namespace_prefix + _hash(self._cpf.encode('utf-8'))[:64]
-        state = context.get_state([address])
-
-        if self.action == 'add':
+    def apply(self, action, state, address, context):
+        if action == 'add':
             if state:
                 print('Doctor already exists')
                 return None
             state_data = self.to_bytes()
             context.set_state({address: state_data})
             
-        elif self.action == 'show':
+        elif action == 'show':
             if not state:
                 print('Doctor does not exist')
                 return None
             state_data = state[0].data.decode('utf-8')
             print(f'Doctor data: {state_data}')
         
-        elif self.action == 'delete':
+        elif action == 'delete':
             if not state:
                 print('Doctor does not exist')
                 return None

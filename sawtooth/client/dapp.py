@@ -30,7 +30,7 @@ class PIBITIClient(object):
     _cpf = None
     def __init__(self, baseUrl, keyFile=None, family_name=None, cpf=None):
         if family_name is None:
-            raise Exception('Family name is N')
+            raise Exception('Family name is None')
         if cpf is None:
             raise Exception('Cpf is None')
 
@@ -148,7 +148,7 @@ def main():
     FAMILY_NAME = 'FAMILY_CONTROLLER'
     CPF = '000.000.000-21'
     rawPayload = {
-        "action": "add",
+        "action": "show",
         "type": "doctor",
         "body": {
             "cpf": CPF,

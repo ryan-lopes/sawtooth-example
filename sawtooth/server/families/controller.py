@@ -20,8 +20,8 @@ class ControllerTransactionHandler(TransactionHandler):
         return ['1.0']
 
     @property
-    def namespace(self):
-        return self._namespace_prefix
+    def namespaces(self):
+        return [self._namespace_prefix]
 
     def apply(self, transaction, context):
         header = transaction.header
@@ -29,7 +29,29 @@ class ControllerTransactionHandler(TransactionHandler):
         action, payload = ControllerFactory.from_bytes(transaction.payload)
         address = self._namespace_prefix + _hash(payload.cpf.encode('utf-8'))[:64]
         state = context.get_state([address])
-        payload.apply(action, state, address, context)
+        
+        if action == 'add':
+            if state:
+                print(f'{payload.type} already exists')
+                return None
+            state_data = payload.to_bytes()
+            context.set_state({address: state_data})
+            print(f'{payload.type} was added')
+        
+        elif action == 'show':
+            if not state:
+                print(f'{payload.type} does not exist')
+                return None
+            state_data = state[0].data.decode('utf-8')
+            print(f'{payload.type} data: {state_data}')
+        
+        elif action == 'delete':
+            if not state:
+                print('{} does not exist' %format(payload.type))
+                return None
+            context.delete_state([address])
+            print(f'{payload.type} was deleted')
+
         
 class ControllerFactory:
     @staticmethod

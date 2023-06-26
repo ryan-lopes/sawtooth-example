@@ -15,12 +15,13 @@ class Patient:
             print('Name is required')
             return None
         
-        if not records:
-            records = []
+        if records:
+            records = [record.from_bytes() for record in records]
 
         self._name = name
         self._cpf = cpf
-        self._records = records
+        self._records = records or []
+        self.type = "Patient"
 
     @property
     def cpf(self):
@@ -38,41 +39,27 @@ class Patient:
         patient = {
             "name": self._name, 
             "cpf": self._cpf,
-            "records": self._records
+            "records": [record.to_bytes() for record in self._records]
         }
         
         return json.dumps(patient).encode()
     
-    def apply(self, action, state, address, context):
-        if action == 'add':
-            if state:
-                print('Patient already exists')
-                return None
-            state_data = self.to_bytes()
-            context.set_state({address: state_data})
-        
-        elif action == 'update':
-            state_data = self.to_bytes()
-            context.set_state({address: state_data})
-        
-        elif action == 'get':
-            if not state:
-                print('Patient does not exist')
-                return None
-            state_data = state[0].data.decode('utf-8')
-            return state_data
-        
-        elif action == 'show':
-            if not state:
-                print('Patient does not exist')
-                return None
-            state_data = state[0].data.decode('utf-8')
-            print(f'Patient data: {state_data}')
+    def add_record(self, record):
+        self._records.append(record)
 
-        elif action == 'delete':
-            if not state:
-                print('Patient does not exist')
-                return None
-            context.delete_state([address])
+    def get_record(self, id_record):
+        for record in self._records:
+            if record.id == id_record:
+                return record
+        print('Record does not exist')
+        return None
 
-        print("Apply realizado com sucesso")
+    def delete_record(self, id_record):
+        record = get_record(id_record)
+        
+
+    def request_record(self, record):
+        self._records.append(record)
+
+    def grant_record(self, record):
+        self._records.append(record)

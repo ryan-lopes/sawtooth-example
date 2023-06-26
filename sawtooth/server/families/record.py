@@ -21,19 +21,39 @@ class RecordTransactionHandler(TransactionHandler):
         return ['1.0']
 
     @property
-    def namespace(self):
-        return self._namespace_prefix
+    def namespaces(self):
+        return [self._namespace_prefix]
 
     def apply(self, transaction, context):
         header = transaction.header
         signer = header.signer_public_key
-        action, patient_cpf, record = RecordFactory.from_bytes(transaction.payload)
+        action, patient_cpf, body = RecordFactory.from_bytes(transaction.payload)
 
         controller_namespace_prefix = ControllerTransactionHandler.namespace
         patient_address = controller_namespace_prefix + _hash(patient_cpf.encode('utf-8'))[:64]
         state = context.get_state([patient_address])
         
         patient = ControllerFactory.getPatient(state)
+
+        if action == 'add':
+            record = Record(body)
+            patient.add_record(record)
+        elif action == 'show':
+            id_record = body["id_record"]
+            record = patient.get_record(id_record)
+            print(f"Record {record}")
+        elif action == 'delete':
+            id_record = body["id_record"]
+            patient.delete_record(id_record)
+        elif action == 'grant':
+            id_record = body["id_record"]
+            doctor_cpf = body["doctor_cpf"]
+            id_request = body["id_request"]
+            patient.grant_record(id_record, doctor_cpf, id_request)
+        elif action == 'request':
+            id_record = body["id_record"]
+            doctor_cpf = body["doctor_cpf"]
+            patient.request_record(id_record, doctor_cpf)
         record.apply(action, patient)
         patient.apply(action="update", state=state, address=patient_address, context=context)
         
@@ -46,6 +66,15 @@ class RecordFactory:
             action = data["action"]
             patient_cpf = data["patient_cpf"]
             body = data["body"]
+            '''
+                payload = {
+                    action: add
+                    patient_cpf: ...
+                    body = {
+                        id, bundle_hash, title
+                    }
+                }
+            '''
         except ValueError:
             print("Invalid payload serialization")
             return None
@@ -57,7 +86,7 @@ class RecordFactory:
         if action not in ('add', 'show', 'delete'):
             print('Invalid action: {}' % format(action))
             return None
-        return action, patient_cpf, Record(body)
+        return action, patient_cpf, body
     @staticmethod
     def from_bytes(payload):
         return RecordFactory.getPayload(payload=payload)

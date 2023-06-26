@@ -16,7 +16,7 @@ class Doctor:
         
         self._name = name
         self._cpf = cpf
-    
+        self.type = "Doctor"
     @property
     def cpf(self):
         return self._cpf
@@ -32,26 +32,3 @@ class Doctor:
         }
         
         return json.dumps(doctor).encode()
-
-    def apply(self, action, state, address, context):
-        if action == 'add':
-            if state:
-                print('Doctor already exists')
-                return None
-            state_data = self.to_bytes()
-            context.set_state({address: state_data})
-            
-        elif action == 'show':
-            if not state:
-                print('Doctor does not exist')
-                return None
-            state_data = state[0].data.decode('utf-8')
-            print(f'Doctor data: {state_data}')
-        
-        elif action == 'delete':
-            if not state:
-                print('Doctor does not exist')
-                return None
-
-            context.delete_state([address])
-        print("Apply realizado com sucesso")

@@ -54,8 +54,7 @@ class RecordTransactionHandler(TransactionHandler):
             id_record = body["id_record"]
             doctor_cpf = body["doctor_cpf"]
             patient.request_record(id_record, doctor_cpf)
-        record.apply(action, patient)
-        patient.apply(action="update", state=state, address=patient_address, context=context)
+        patient.apply(state=state, address=patient_address, context=context)
         
 class RecordFactory:
     @staticmethod

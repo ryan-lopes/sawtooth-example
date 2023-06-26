@@ -44,8 +44,13 @@ class Patient:
         
         return json.dumps(patient).encode()
     
+    def update_patient(self, state, address, context):
+        state_data = state.to_bytes()
+        context.set_state({address: state_data})
+
     def add_record(self, record):
         self._records.append(record)
+        
 
     def get_record(self, id_record):
         for record in self._records:
@@ -63,7 +68,7 @@ class Patient:
         return None
         
 
-    def request_record(self, record):
+    def request_record(self, id_record, doctor_cpf):
         self._records.append(record)
 
     def grant_record(self, record):

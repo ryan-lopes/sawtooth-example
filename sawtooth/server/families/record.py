@@ -2,7 +2,7 @@ from sawtooth_sdk.processor.handler import TransactionHandler
 
 from models.recordModel import Record
 from utils import _hash
-from controller import ControllerTransactionHandler, ControllerFactory
+from families.controller import ControllerTransactionHandler, ControllerFactory
 
 import json
 
@@ -49,12 +49,14 @@ class RecordTransactionHandler(TransactionHandler):
             id_record = body["id_record"]
             doctor_cpf = body["doctor_cpf"]
             id_request = body["id_request"]
-            patient.grant_record(id_record, doctor_cpf, id_request)
+            request_status = body["request_status"]
+            patient.grant_record(id_record, doctor_cpf, id_request, request_status)
         elif action == 'request':
             id_record = body["id_record"]
             doctor_cpf = body["doctor_cpf"]
-            patient.request_record(id_record, doctor_cpf)
-        patient.apply(state=state, address=patient_address, context=context)
+            id_request = body["id_request"]
+            patient.request_record(id_record, doctor_cpf, id_request)
+        patient.update_patient(state=state, address=patient_address, context=context)
         
 class RecordFactory:
     @staticmethod

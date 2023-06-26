@@ -3,6 +3,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.exceptions import InternalError
 
 from families.controller import ControllerTransactionHandler
+from families.record import RecordTransactionHandler
 import traceback
 import sys
 
@@ -11,7 +12,9 @@ def main():
     try:
         processor = TransactionProcessor(url='tcp://validator:4004')
         controller_handler = ControllerTransactionHandler()
+        record_handler = RecordTransactionHandler()
         processor.add_handler(controller_handler)
+        processor.add_handler(record_handler)
         processor.start()
     except KeyboardInterrupt:
         pass

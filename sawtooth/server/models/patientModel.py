@@ -51,7 +51,6 @@ class Patient:
     def add_record(self, record):
         self._records.append(record)
         
-
     def get_record(self, id_record):
         for record in self._records:
             if record.id == id_record:
@@ -68,8 +67,18 @@ class Patient:
         return None
         
 
-    def request_record(self, id_record, doctor_cpf):
-        self._records.append(record)
+    def request_record(self, id_record, doctor_cpf, id_request):
+        for record in self._records:
+            if record.id == id_record:
+                record.requested(id_request, doctor_cpf)
+                return None
+        print('Record does not exist')
+        return None
 
-    def grant_record(self, record):
-        self._records.append(record)
+    def grant_record(self, id_record, doctor_cpf, id_request, request_status):
+        for record in self._records:
+            if record.id == id_record:
+                record.granted(id_request, request_status)
+                return None
+        print('Record does not exist')
+        return None

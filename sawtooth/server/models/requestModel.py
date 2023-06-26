@@ -3,10 +3,17 @@ import json
 from utils import _hash
 
 class Request:
-    def __init__(self, doctor_cpf, request_id):
+    def __init__(self, body):
+        doctor_cpf = body["doctor_cpf"]
+        request_id = body["request_id"]
+        request_status = body["request_status"]
+        
+        if request_status == None:
+            request_status = 0
+
         self._doctor_cpf = doctor_cpf
         self._request_id = request_id
-        self._request_status = 0 #0 for waiting approval, 1 for approved, 2 for denied.
+        self._request_status = request_status #0 for waiting approval, 1 for approved, 2 for denied.
 
     @property
     def doctor(self):
@@ -39,10 +46,7 @@ class Request:
         doctor_cpf = data_dict['doctor_cpf']
         request_id = data_dict['request_id']
         request_status = data_dict['request_status']
-
-        request = Request(doctor_cpf, request_id)
-
-        request.status = request_status
+        request = Request(doctor_cpf, request_id, request_status)
 
         return request
 

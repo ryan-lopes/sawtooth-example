@@ -12,10 +12,13 @@ class Record:
             print('ID is required')
             return None
         
+        if requests:
+            requests = [Request.from_bytes(request) for request in requests]
+        
         self._id = id
         self._title = title
         self._bundle_hash = bundle_hash
-        self._requests = requests
+        self._requests = requests or []
     @property
     def action(self):
         return self._action
@@ -44,18 +47,18 @@ class Record:
         }
         
         return json.dumps(record).encode()
+    @staticmethod
+    def from_bytes(record):
+        return Record(json.loads(record.decode('utf-8')))
+    
+    def requested(self, id_request, doctor_cpf):
+        request = Request(id_request, doctor_cpf)
+        self._requests.append(request)
 
-    def apply(self, action, patient):
-        if action == 'add':
-            patient.add_record(self.to_bytes())
-        elif action == 'show':
-            record = patient.get_record(self.id)
-        elif action == 'delete':
-            patient.delete_record(self.id)
-        elif action == 'grant':
-            # patient.grant_record(self.id, id_request)
-            pass
-        elif action == 'request':
-            # patient.request_record(self.id, cpf_doctor)
-            pass
-        print("Apply realizado com sucesso")
+    def granted(self, id_request, request_status):
+        for request in self._requests:
+            if request.id == id_request:
+                request.reply(request_status)
+                return None
+        print('Record does not exist')
+        return None

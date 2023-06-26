@@ -55,7 +55,12 @@ class Patient:
         return None
 
     def delete_record(self, id_record):
-        record = get_record(id_record)
+        for record in self._records:
+            if record.id == id_record:
+                self._records.remove(record)
+                return None
+        print('Record does not exist')
+        return None
         
 
     def request_record(self, record):

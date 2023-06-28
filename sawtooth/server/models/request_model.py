@@ -4,8 +4,8 @@ from utils import _hash
 
 class Request:
     def __init__(self, body):
-        doctor_cpf = body["doctor_cpf"]
-        request_id = body["request_id"]
+        doctor_cpf = body.get("doctor_cpf", None)
+        request_id = body.get("request_id", None)
         request_status = body.get("request_status", None)
         
         if request_status == None:
@@ -39,14 +39,13 @@ class Request:
         
         return json.dumps(request)
     
-    def from_json(self, data):
+    @staticmethod
+    def from_json(data):
         data_dict = json.loads(data)
         
         # Extract the values for doctor_cpf and request_id
-        doctor_cpf = data_dict['doctor_cpf']
-        request_id = data_dict['request_id']
-        request_status = data_dict['request_status']
-        request = Request(doctor_cpf, request_id, request_status)
+          
+        request = Request(data_dict)
 
         return request
 

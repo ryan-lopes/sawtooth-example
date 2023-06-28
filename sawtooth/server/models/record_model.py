@@ -1,11 +1,11 @@
 import json
 from utils import _hash
-from models.requestModel import Request
+from models.request_model import Request
 class Record:
     def __init__(self, body):
-        id_record = body["id_record"]
-        title = body["title"]
-        bundle_hash = body["bundle_hash"]
+        id_record = body.get("id_record",None)
+        title = body.get("title", None)
+        bundle_hash = body.get("bundle_hash", None)
         requests = body.get("requests", None)
 
         if not id_record:
@@ -13,7 +13,7 @@ class Record:
             return None
         
         if requests:
-            requests = [Request.from_bytes(request) for request in requests]
+            requests = [Request.from_json(request) for request in requests]
         
         self._id_record = id_record
         self._title = title
@@ -36,10 +36,11 @@ class Record:
             "id_record": self._id_record,
             "title": self._title, 
             "bundle_hash": self._bundle_hash,
-            "requests": self._requests
+            "requests": [request.to_json() for request in self._requests]
         }
         
         return json.dumps(record)
+    
     @staticmethod
     def from_json(record):
         return Record(json.loads(record))

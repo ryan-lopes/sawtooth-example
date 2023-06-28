@@ -2,8 +2,8 @@ from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.exceptions import InternalError
 
-from families.controller import ControllerTransactionHandler
-from families.record import RecordTransactionHandler
+from families.controller_family import ControllerTransactionHandler
+from families.record_family import RecordTransactionHandler
 import traceback
 import sys
 

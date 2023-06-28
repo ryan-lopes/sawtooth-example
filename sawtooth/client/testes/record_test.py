@@ -6,34 +6,6 @@ CONTROLLER_FAMILY_NAME = 'FAMILY_CONTROLLER'
 RECORD_FAMILY_NAME = 'FAMILY_RECORD'
 key_file = '/sawtooth/client/jorge.priv'
 
-def doctor_add():
-    rawPayload = {
-        "action": "add",
-        "type": "doctor",
-        "body": {
-            "cpf": DOCTOR_CPF,
-            "name": "ryan",
-        }
-    }
-    client = PIBITIClient(baseUrl=DEFAULT_URL, keyFile=key_file, family_name=CONTROLLER_FAMILY_NAME, cpf=DOCTOR_CPF)
-    print("Wrap and send - Add Doctor")
-    response = client._wrap_and_send(rawPayload)
-    print("Response: {}".format(response))
-
-def patient_add():
-    rawPayload = {
-        "action": "add",
-        "type": "patient",
-        "body": {
-            "cpf": PATIENT_CPF,
-            "name": "ryan",
-        }
-    }
-    client = PIBITIClient(baseUrl=DEFAULT_URL, keyFile=key_file, family_name=CONTROLLER_FAMILY_NAME, cpf=PATIENT_CPF)
-    print("Wrap and send - Add Patient")
-    response = client._wrap_and_send(rawPayload)
-    print("Response: {}".format(response))
-
 def record_add():
     rawPayload = {
         "action": "add",
@@ -93,12 +65,3 @@ def record_grant():
     print("Wrap and send - Grant Record")
     response = client._wrap_and_send(rawPayload)
     print("Response: {}".format(response))
-
-
-if __name__ == "__main__":
-    doctor_add()
-    patient_add()
-    record_add()
-    record_show()
-    record_request()
-    record_grant()

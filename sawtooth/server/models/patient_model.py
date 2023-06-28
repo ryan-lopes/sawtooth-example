@@ -1,12 +1,12 @@
 import json
 from utils import _hash
 
-from models.recordModel import Record
+from models.record_model import Record
 
 class Patient:
     def __init__(self, body):
-        cpf = body["cpf"]
-        name = body["name"]
+        cpf = body.get("cpf", None)
+        name = body.get("name", None)
         records = body.get("records", None)
         
         if not cpf:

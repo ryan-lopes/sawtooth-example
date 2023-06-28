@@ -3,8 +3,8 @@ from utils import _hash
 
 class Doctor:
     def __init__(self, body):
-        cpf = body["cpf"]
-        name = body["name"]
+        cpf = body.get("cpf", None)
+        name = body.get("name", None)
         
         if not cpf:
             print('CPF is required')

@@ -59,7 +59,11 @@ class PIBITIClient(object):
         self._publicKey = self._signer.get_public_key().as_hex()
 
         self._address = _hash(self._family_name.encode('utf-8'))[0:6] + _hash(self._cpf.encode('utf-8'))[0:64]
- 
+    
+    
+    def get_address(self, family_name):
+        return _hash(family_name.encode('utf-8'))[0:6] + _hash(self._cpf.encode('utf-8'))[0:64]
+    
     def _send_to_restapi(self,suffix,data=None,contentType=None):
 
         if self._baseUrl.startswith("http://"):
@@ -97,8 +101,10 @@ class PIBITIClient(object):
 
         # Construct the address where we'll store our state
         address = self._address
-        inputAddressList = [address]
-        outputAddressList = [address]
+        controller_address = self.get_address("FAMILY_CONTROLLER")
+        record_address = self.get_address("FAMILY_RECORD")
+        inputAddressList = [controller_address, record_address]
+        outputAddressList = [controller_address, record_address]
 
         # Create a TransactionHeader
         header = TransactionHeader(
@@ -142,33 +148,3 @@ class PIBITIClient(object):
             "batches",
             batch_list.SerializeToString(),
             'application/octet-stream')
-
-def main():
-
-    FAMILY_NAME = 'FAMILY_CONTROLLER'
-    CPF = '000.000.000-21'
-    rawPayload = {
-        "action": "show",
-        "type": "doctor",
-        "body": {
-            "cpf": CPF,
-            "name": "ryan",
-        }
-    }
-    
-    key_file = '/sawtooth/client/jorge.priv'
-    client = PIBITIClient(baseUrl=DEFAULT_URL, keyFile=key_file, family_name=FAMILY_NAME, cpf=CPF)
-    print("Wrap and send")
-    response = client._wrap_and_send(rawPayload)
-    print("Response: {}".format(response))
-
-main()
-
-# Funções para o contrato
-## ControllerSC
-### addPacient
-### deletePacient
-### showPacient
-### addDoctor
-### deleteDoctor
-### showDoctor

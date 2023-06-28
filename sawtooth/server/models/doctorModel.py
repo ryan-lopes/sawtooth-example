@@ -32,3 +32,4 @@ class Doctor:
         }
         
         return json.dumps(doctor).encode()
+    

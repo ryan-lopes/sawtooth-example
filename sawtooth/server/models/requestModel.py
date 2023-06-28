@@ -6,7 +6,7 @@ class Request:
     def __init__(self, body):
         doctor_cpf = body["doctor_cpf"]
         request_id = body["request_id"]
-        request_status = body["request_status"]
+        request_status = body.get("request_status", None)
         
         if request_status == None:
             request_status = 0
@@ -30,17 +30,17 @@ class Request:
     def reply(self, status):
         self._request_id = status
 
-    def to_bytes(self):
+    def to_json(self):
         request = {
             "doctor_cpf": self._doctor_cpf, 
             "request_id": self._request_id,
             "request_status": self._request_status
         }
         
-        return json.dumps(request).encode()
+        return json.dumps(request)
     
-    def from_bytes(self, data):
-        data_dict = json.loads(data.decode())
+    def from_json(self, data):
+        data_dict = json.loads(data)
         
         # Extract the values for doctor_cpf and request_id
         doctor_cpf = data_dict['doctor_cpf']
@@ -50,3 +50,5 @@ class Request:
 
         return request
 
+    def __repr__(self):
+        return f"ID: {self._request_id}, Doctor_CPF: {self._doctor_cpf}, request_status: {self._request_status}"

@@ -22,6 +22,9 @@ class ControllerTransactionHandler(TransactionHandler):
     @property
     def namespaces(self):
         return [self._namespace_prefix]
+    
+    def getNamespace(self):
+        return self._namespace_prefix
 
     def apply(self, transaction, context):
         header = transaction.header
@@ -59,7 +62,7 @@ class ControllerFactory:
         if not state:
             print('Patient does not exist')
             return None
-        state_data = state[0].data.decode('utf-8')
+        state_data = state[0].data
         return Patient.from_bytes(state_data)
     @staticmethod
     def getPayload(payload):

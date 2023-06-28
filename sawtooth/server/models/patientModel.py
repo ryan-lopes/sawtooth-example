@@ -1,11 +1,13 @@
 import json
 from utils import _hash
 
+from models.recordModel import Record
+
 class Patient:
     def __init__(self, body):
         cpf = body["cpf"]
         name = body["name"]
-        records = body["records"]
+        records = body.get("records", None)
         
         if not cpf:
             print('CPF is required')
@@ -16,7 +18,7 @@ class Patient:
             return None
         
         if records:
-            records = [record.from_bytes() for record in records]
+            records = [Record.from_json(record) for record in records]
 
         self._name = name
         self._cpf = cpf
@@ -30,8 +32,9 @@ class Patient:
     @property
     def name(self):
         return self._name
-
-    def from_bytes(self, data):
+    
+    @staticmethod
+    def from_bytes(data):
         body = json.loads(data.decode('utf-8'))
         return Patient(body)
     
@@ -39,13 +42,12 @@ class Patient:
         patient = {
             "name": self._name, 
             "cpf": self._cpf,
-            "records": [record.to_bytes() for record in self._records]
+            "records": [record.to_json() for record in self._records]
         }
-        
         return json.dumps(patient).encode()
     
     def update_patient(self, state, address, context):
-        state_data = state.to_bytes()
+        state_data = self.to_bytes()
         context.set_state({address: state_data})
 
     def add_record(self, record):
@@ -53,14 +55,14 @@ class Patient:
         
     def get_record(self, id_record):
         for record in self._records:
-            if record.id == id_record:
+            if record._id_record == id_record:
                 return record
         print('Record does not exist')
         return None
 
     def delete_record(self, id_record):
         for record in self._records:
-            if record.id == id_record:
+            if record._id_record == id_record:
                 self._records.remove(record)
                 return None
         print('Record does not exist')
@@ -69,7 +71,7 @@ class Patient:
 
     def request_record(self, id_record, doctor_cpf, id_request):
         for record in self._records:
-            if record.id == id_record:
+            if record._id_record == id_record:
                 record.requested(id_request, doctor_cpf)
                 return None
         print('Record does not exist')
@@ -77,7 +79,7 @@ class Patient:
 
     def grant_record(self, id_record, doctor_cpf, id_request, request_status):
         for record in self._records:
-            if record.id == id_record:
+            if record._id_record == id_record:
                 record.granted(id_request, request_status)
                 return None
         print('Record does not exist')

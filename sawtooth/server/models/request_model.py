@@ -28,7 +28,7 @@ class Request:
         return self._request_status
     
     def reply(self, status):
-        self._request_id = status
+        self._request_status = status
 
     def to_json(self):
         request = {

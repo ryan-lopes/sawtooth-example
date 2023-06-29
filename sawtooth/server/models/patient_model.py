@@ -23,7 +23,7 @@ class Patient:
         self._name = name
         self._cpf = cpf
         self._records = records or []
-        self.type = "Patient"
+        self._type = "Patient"
 
     @property
     def cpf(self):
@@ -42,6 +42,7 @@ class Patient:
         patient = {
             "name": self._name, 
             "cpf": self._cpf,
+            "type": self._type, 
             "records": [record.to_json() for record in self._records]
         }
         return json.dumps(patient).encode()
@@ -84,3 +85,6 @@ class Patient:
                 return None
         print('Record does not exist')
         return None
+    
+    def __repr__(self) -> str:
+        return f"Name: {self._name}, CPF: {self._cpf}, Type: {self._type}, Records: {';'.join([repr(record) for record in self._records])}\n"

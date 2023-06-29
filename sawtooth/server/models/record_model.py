@@ -60,4 +60,4 @@ class Record:
         print('Record does not exist')
         return None
     def __repr__(self):
-        return f"ID: {self._id_record}, bundle_hash: {self._bundle_hash}, title: {self._title}"
+        return f"ID: {self._id_record}, bundle_hash: {self._bundle_hash}, title: {self._title}, Requests: --- {','.join([repr(request) for request in self._requests])} ---\n"

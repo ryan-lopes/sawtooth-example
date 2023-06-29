@@ -16,7 +16,7 @@ class Doctor:
         
         self._name = name
         self._cpf = cpf
-        self.type = "Doctor"
+        self._type = "Doctor"
     @property
     def cpf(self):
         return self._cpf
@@ -27,7 +27,8 @@ class Doctor:
 
     def to_bytes(self):
         doctor = {
-            "name": self._name, 
+            "name": self._name,
+            "type": self._type,
             "cpf": self._cpf
         }
         

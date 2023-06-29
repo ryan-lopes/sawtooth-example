@@ -39,25 +39,25 @@ class ControllerTransactionHandler(TransactionHandler):
             
         if action == 'add':
             if state:
-                print(f'{payload.type} already exists')
+                print(f'{payload._type} already exists')
                 return None
             state_data = payload.to_bytes()
             context.set_state({address: state_data})
-            print(f'{payload.type} was added')
+            print(f'{payload._type} was added')
         
         elif action == 'show':
             if not state:
-                print(f'{payload.type} does not exist')
+                print(f'{payload._type} does not exist')
                 return None
             state_data = state[0].data.decode('utf-8')
-            print(f'{payload.type} data: {state_data}')
+            print(f'{payload._type} data: {ControllerFactory.getPatient(state)}')
         
         elif action == 'delete':
             if not state:
-                print('{} does not exist' %format(payload.type))
+                print('{} does not exist' %format(payload._type))
                 return None
             context.delete_state([address])
-            print(f'{payload.type} was deleted')
+            print(f'{payload._type} was deleted')
 
         
 class ControllerFactory:

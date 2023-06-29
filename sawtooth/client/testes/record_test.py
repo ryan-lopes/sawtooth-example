@@ -1,10 +1,5 @@
 from dapp import DEFAULT_URL, PIBITIClient
-
-DOCTOR_CPF = '111.111.111-11'
-PATIENT_CPF = '222.222.222-22'
-CONTROLLER_FAMILY_NAME = 'FAMILY_CONTROLLER'
-RECORD_FAMILY_NAME = 'FAMILY_RECORD'
-key_file = '/sawtooth/client/jorge.priv'
+from testes.config_test import *
 
 def record_add():
     rawPayload = {

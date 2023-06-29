@@ -1,10 +1,6 @@
 from dapp import DEFAULT_URL, PIBITIClient
+from testes.config_test import *
 
-DOCTOR_CPF = '111.111.111-11'
-PATIENT_CPF = '222.222.222-22'
-CONTROLLER_FAMILY_NAME = 'FAMILY_CONTROLLER'
-RECORD_FAMILY_NAME = 'FAMILY_RECORD'
-key_file = '/sawtooth/client/jorge.priv'
 
 def doctor_add():
     rawPayload = {
@@ -47,3 +43,4 @@ def patient_show():
     print("Wrap and send - show Patient")
     response = client._wrap_and_send(rawPayload)
     print("Response: {}".format(response))
+
